@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - IFAL Mentor AI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-[#184d2d] min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white w-full max-w-md rounded-[2rem] p-8 shadow-2xl">
+
+        <div class="flex flex-col items-center">
+
+            <div class="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center text-green-700 text-4xl mb-5">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+
+            <h1 class="text-2xl font-bold">
+                IFAL Mentor AI
+            </h1>
+
+            <p class="text-gray-500 text-sm mt-1 mb-8">
+                Seu assistente acadêmico inteligente
+            </p>
+        </div>
+
+        <form id="loginForm" class="space-y-4">
+
+            <div>
+                <label class="font-semibold text-sm">
+                    Nome Completo
+                </label>
+
+                <input
+                    type="text"
+                    id="user"
+                    required
+                    class="w-full mt-2 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                >
+            </div>
+
+            <div>
+                <label class="font-semibold text-sm">
+                    Email Institucional
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    required
+                    class="w-full mt-2 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                >
+            </div>
+
+            <p id="errorMsg" class="text-red-500 text-sm hidden">
+                Dados incorretos ou não autorizados.
+            </p>
+
+            <button
+                type="submit"
+                class="w-full bg-[#2e7d32] hover:bg-[#1f5b24] transition-all text-white font-bold py-4 rounded-xl shadow-lg"
+            >
+                Acessar Plataforma
+            </button>
+
+        </form>
+
+        <p class="text-center text-gray-400 tracking-widest text-xs mt-10">
+            TECNOLOGIA & EDUCAÇÃO
+        </p>
+
+    </div>
+
+    <script>
+
+        const form = document.getElementById('loginForm');
+
+        form.addEventListener('submit', (e) => {
+
+            e.preventDefault();
+
+            const user = document.getElementById('user').value;
+            const email = document.getElementById('email').value;
+
+            if(!user || !email) {
+                return;
+            }
+
+            localStorage.setItem('ifal_logged', 'true');
+            localStorage.setItem('ifal_user', user);
+            localStorage.setItem('ifal_email', email);
+
+            window.location.href = '/chat';
+        });
+
+    </script>
+
+</body>
+</html>
