@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - IFAL Mentor AI</title>
+    <title>Acesso - IFAL Mentor AI</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body class="bg-[#184d2d] min-h-screen flex items-center justify-center p-4">
@@ -16,7 +14,6 @@
     <div class="bg-white w-full max-w-md rounded-[2rem] p-8 shadow-2xl">
 
         <div class="flex flex-col items-center">
-
             <div class="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center text-green-700 text-4xl mb-5">
                 <i class="fas fa-graduation-cap"></i>
             </div>
@@ -25,23 +22,23 @@
                 IFAL Mentor AI
             </h1>
 
-            <p class="text-gray-500 text-sm mt-1 mb-8">
+            <p class="text-gray-500 text-sm mt-1 mb-8 text-center">
                 Seu assistente acadêmico inteligente
             </p>
         </div>
 
-        <form id="loginForm" class="space-y-4">
+        <form id="authForm" class="space-y-4">
 
             <div>
                 <label class="font-semibold text-sm">
                     Nome Completo
                 </label>
-
                 <input
                     type="text"
                     id="user"
                     required
                     class="w-full mt-2 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Ex: Augusto Silva"
                 >
             </div>
 
@@ -49,25 +46,35 @@
                 <label class="font-semibold text-sm">
                     Email Institucional
                 </label>
-
                 <input
                     type="email"
                     id="email"
                     required
                     class="w-full mt-2 border p-4 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="seuemail@ifal.edu.br"
                 >
             </div>
 
-            <p id="errorMsg" class="text-red-500 text-sm hidden">
-                Dados incorretos ou não autorizados.
-            </p>
+            <p id="errorMsg" class="text-red-500 text-sm font-semibold bg-red-50 p-3 rounded-lg hidden text-center border border-red-200"></p>
+            <p id="successMsg" class="text-green-600 text-sm font-semibold bg-green-50 p-3 rounded-lg hidden text-center border border-green-200"></p>
 
-            <button
-                type="submit"
-                class="w-full bg-[#2e7d32] hover:bg-[#1f5b24] transition-all text-white font-bold py-4 rounded-xl shadow-lg"
-            >
-                Acessar Plataforma
-            </button>
+            <div class="pt-2 space-y-3">
+                <button
+                    type="button"
+                    id="loginBtn"
+                    class="w-full bg-[#2e7d32] hover:bg-[#1f5b24] transition-all text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2"
+                >
+                    <i class="fas fa-sign-in-alt"></i> Acessar Plataforma
+                </button>
+
+                <button
+                    type="button"
+                    id="registerBtn"
+                    class="w-full bg-white border-2 border-[#2e7d32] text-[#2e7d32] hover:bg-green-50 transition-all font-bold py-4 rounded-xl flex items-center justify-center gap-2"
+                >
+                    <i class="fas fa-user-plus"></i> Cadastrar Usuário
+                </button>
+            </div>
 
         </form>
 
@@ -78,27 +85,92 @@
     </div>
 
     <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
 
-        const form = document.getElementById('loginForm');
+        // Função utilitária para pegar os dados limpando espaços
+        function getInputs() {
+            return {
+                user: document.getElementById('user').value.trim(),
+                email: document.getElementById('email').value.trim()
+            };
+        }
 
-        form.addEventListener('submit', (e) => {
+        // Função para limpar mensagens da tela
+        function clearMessages() {
+            errorMsg.classList.add('hidden');
+            successMsg.classList.add('hidden');
+        }
 
-            e.preventDefault();
+        // ==========================================
+        // AÇÃO DO BOTÃO: CADASTRAR USUÁRIO
+        // ==========================================
+        registerBtn.addEventListener('click', () => {
+            clearMessages();
+            const { user, email } = getInputs();
 
-            const user = document.getElementById('user').value;
-            const email = document.getElementById('email').value;
-
-            if(!user || !email) {
+            // Validação de campos vazios
+            if (!user || !email) {
+                errorMsg.innerText = "Por favor, preencha Nome e E-mail para cadastrar.";
+                errorMsg.classList.remove('hidden');
                 return;
             }
 
-            localStorage.setItem('ifal_logged', 'true');
-            localStorage.setItem('ifal_user', user);
-            localStorage.setItem('ifal_email', email);
+            // Busca banco simulado no localStorage
+            let usersDatabase = JSON.parse(localStorage.getItem('ifal_registered_users')) || [];
 
-            window.location.href = '/chat';
+            // Verifica se o e-mail já existe
+            const emailExists = usersDatabase.some(u => u.email.toLowerCase() === email.toLowerCase());
+            if (emailExists) {
+                errorMsg.innerText = "Este e-mail institucional já está cadastrado!";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            // Adiciona novo usuário
+            usersDatabase.push({ user, email });
+            localStorage.setItem('ifal_registered_users', JSON.stringify(usersDatabase));
+
+            successMsg.innerText = "Usuário cadastrado com sucesso! Clique em 'Acessar Plataforma' para entrar.";
+            successMsg.classList.remove('hidden');
         });
 
+        // ==========================================
+        // AÇÃO DO BOTÃO: ACESSAR PLATAFORMA (LOGIN)
+        // ==========================================
+        loginBtn.addEventListener('click', () => {
+            clearMessages();
+            const { user, email } = getInputs();
+
+            if (!user || !email) {
+                errorMsg.innerText = "Por favor, preencha Nome e E-mail para fazer login.";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            // Busca banco simulado no localStorage
+            let usersDatabase = JSON.parse(localStorage.getItem('ifal_registered_users')) || [];
+
+            // Validação crítica: Verifica se o e-mail existe E se o nome bate
+            const validUser = usersDatabase.find(u => u.email.toLowerCase() === email.toLowerCase() && u.user.toLowerCase() === user.toLowerCase());
+
+            // Se não encontrar o usuário ou dados não baterem, exibe o erro solicitado
+            if (!validUser) {
+                errorMsg.innerText = "Usuário não encontrado ou dados incorretos. Cadastre-se primeiro!";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            // Se deu certo, cria a sessão ativa
+            localStorage.setItem('ifal_logged', 'true');
+            localStorage.setItem('ifal_user', validUser.user);
+            localStorage.setItem('ifal_email', validUser.email);
+
+            // Redireciona para o chat do sistema
+            window.location.href = '/chat';
+        });
     </script>
 
 </body>

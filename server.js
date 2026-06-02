@@ -36,8 +36,11 @@ const upload = multer({
 // =========================
 // GROQ
 // =========================
+// =========================
+// GROQ
+// =========================
 const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY
+    apiKey: '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'
 });
 
 // =========================
