@@ -34,13 +34,10 @@ const upload = multer({
 });
 
 // =========================
-// GROQ
-// =========================
-// =========================
-// GROQ
+// GROQ (CORRIGIDO PARA .ENV)
 // =========================
 const groq = new Groq({
-    apiKey: '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'
+    apiKey: process.env.GROQ_API_KEY
 });
 
 // =========================
@@ -82,7 +79,7 @@ app.delete('/api/historico', (req, res) => {
 });
 
 // =========================
-// ROTA PRINCIPAL: IA + PDF (CORRIGIDA)
+// ROTA PRINCIPAL: IA + PDF
 // =========================
 app.post('/ask', upload.array('files'), async (req, res) => {
     try {
@@ -91,7 +88,7 @@ app.post('/ask', upload.array('files'), async (req, res) => {
 
         let contextText = "";
 
-        // CORREÇÃO: Lendo e acumulando o texto dos PDFs corretamente
+        // Lendo e acumulando o texto dos PDFs corretamente
         if (req.files && req.files.length > 0) {
             console.log(`Recebidos ${req.files.length} arquivo(s)`);
             
@@ -126,7 +123,7 @@ app.post('/ask', upload.array('files'), async (req, res) => {
             finalUserMessage = question;
         }
 
-        // Chamada da IA do Groq
+        // Chamada da IA do Groq usando o modelo Llama 3.3
         const completion = await groq.chat.completions.create({
             model: "llama-3.3-70b-versatile",
             messages: [
